@@ -36,8 +36,8 @@ Above codes will produce:
 ```
 <div class="bold italic">
     <form id="student-form" method="post" action="myweb.com">
-        <p><i>Halo dunia</i></p>
-        <p><strong>Teks ini ditulis dengan PHP</strong></p>
+        <p><i>Hello world!</i></p>
+        <p><strong>This text written in PHP</strong></p>
     </form>
 </div>
 ```
