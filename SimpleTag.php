@@ -55,27 +55,9 @@ class SimpleTag
      */
     public function elem($tag, array $attributes = [])
     {
-        $result = '';
-        if(is_array($tag))
-        {
-            $rawTag = array_keys($tag);
-
-            // loop the tags
-            foreach($tag as $k => $v) 
-            {
-                $attr = $this->createAttribute($v);
-                $result .= "<{$k}{$attr}>";
-            }
-        }
-        else
-        {
-            $attr = $this->createAttribute($attributes);           
-            $result = "<{$tag}{$attr}>";
-            $rawTag = [$tag];
-        }
-
-        $this->openTag = $result;
-        $this->rawTag = $rawTag;
+        $element = $this->createOpenTag($tag, $attributes);
+        $this->openTag = $element[0];
+        $this->rawTag = $element[1];
 
         return $this;
     }    
@@ -84,37 +66,53 @@ class SimpleTag
      * Set content of outer HTML
      * 
      * @param string $inner
-     * @param string $outer
+     * @param string|array $outer
      * @param array $style
      * 
      * @return SimpleTag
      */
-    public function setContent(string $inner, string $outer = 'p', array $style = [])
-    {            
+    public function content(string $inner, $outer = 'p', array $style = [])
+    {   
         $result = '';
-        if(strpos($outer, '>') === false)
-        {
-            $styleStr = $this->createStyle($outer, $style);
-            $result = '<'.$outer. ' ' .$styleStr.'>'. $inner .'</'.$outer.'>';
+        if(is_array($outer))
+        {   
+            $tags = array_keys($outer);
+            $openTag = $this->createOpenTag($outer);
+            $closeTagWrapper = [];
+            foreach($tags as $tag)
+            {
+                $closeTagWrapper[] = "</$tag>";
+            }
+
+            $closeTag = implode('', array_reverse($closeTagWrapper));
+            $result = $openTag[0] . $inner . $closeTag;
         }
         else
         {
-            $removeSpace = str_replace(' ', '', $outer);
-            $elems = explode('>', $removeSpace);
-            $outerOpen = '';
-            $outerClose = '';
-            $outerCloseWrapper = [];
-            foreach($elems as $val)
+            if(strpos($outer, '>') === false)
             {
-                $styleStr = $this->createStyle($val, $style);
-                $outerOpen .= '<' . $val . $styleStr . '>';
-                $outerCloseWrapper[] = '</' . $val . '>';
+                $styleStr = $this->createStyle($outer, $style);
+                $result = '<'.$outer. ' ' .$styleStr.'>'. $inner .'</'.$outer.'>';
             }
-
-            $outerClose = implode('', array_reverse($outerCloseWrapper));
-
-            $result = $outerOpen . $inner . $outerClose . "\n";            
-        }
+            else
+            {
+                $removeSpace = str_replace(' ', '', $outer);
+                $elems = explode('>', $removeSpace);
+                $outerOpen = '';
+                $outerClose = '';
+                $outerCloseWrapper = [];
+                foreach($elems as $val)
+                {
+                    $styleStr = $this->createStyle($val, $style);
+                    $outerOpen .= '<' . $val . $styleStr . '>';
+                    $outerCloseWrapper[] = '</' . $val . '>';
+                }
+    
+                $outerClose = implode('', array_reverse($outerCloseWrapper));
+    
+                $result = $outerOpen . $inner . $outerClose . "\n";            
+            }
+        }        
 
         $this->content .= $result;
 
@@ -138,6 +136,33 @@ class SimpleTag
         $this->closeTag = implode('', array_reverse($wrapper));
     }    
 
+    private function createOpenTag($tag, array $attributes = [])
+    {
+        $result = '';
+        if(is_array($tag))
+        {
+            $rawTag = array_keys($tag);
+
+            // loop the tags
+            foreach($tag as $k => $v) 
+            {
+                $attr = '';
+                $attr = $this->createAttribute($v);
+                $result .= "<{$k}{$attr}>";
+            }
+        }
+        else
+        {
+            $attr = $this->createAttribute($attributes);      
+            $result = "<{$tag}{$attr}>";
+            $rawTag = [$tag];
+        }
+
+        return [
+            $result, $rawTag
+        ];
+    }
+
     /**
      * Create element attributes
      * 
@@ -152,8 +177,29 @@ class SimpleTag
         {
             foreach($attributes as $key => $val)
             {
-                // create attribute like class="center"
-                $attr .= ' ' . $key . '="' . $val .'"';
+                if($key !== 'style')
+                {
+                    // create attribute like class="center"
+                    $attr .= ' ' . $key . '="' . $val .'"';
+                }
+                else
+                {
+                    // create inline style like style="color: yellow;"
+                    $styleStr = ' style="';
+                    $closeStyle = '';
+                    $i = 1;
+                    foreach($attributes[$key] as $style => $value)
+                    {                            
+                        if($i === count($attributes[$key]))
+                        {
+                            $closeStyle = '"';
+                        }
+                        $styleStr .= $style .': ' . $value .  ';' . $closeStyle;
+                        $i++;
+                    }
+
+                    $attr .= $styleStr;
+                }
             }
         }
 
@@ -182,11 +228,11 @@ class SimpleTag
                 {
                     $closeStyle = '"';
                 }
-                $styleStr .= ' ' . $k .': ' . $v . ';' . $closeStyle;
+                $styleStr .= ' ' . $k .': ' . $v .  ';' . $closeStyle;
                 $i++;
             }
 
             return $styleStr;
         }
-    }    
+    }
 }   

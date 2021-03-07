@@ -16,31 +16,56 @@ views with readable and clean PHP codes!
 
 ## How-to
 Using SimpleTag is very easy if you have good undestanding with HTML. It uses array
-to create structured HTML element. The magic `setContent()` method simplifies the way you
+to create structured HTML element. The magic `content()` method simplifies the way you
 write inner HTML. Here is a basic example of SimpleTag:
 ```
 require 'SimpleTag.php';
 
 $tag = new SimpleTag();
 $elems = [
-    'div' => ['class' => 'bold italic'],
+    'div' => ['class' => 'bold italic', 'id' => 'app'],
     'form' => ['id' => 'student-form', 'method' => 'post', 'action' => 'myweb.com']
 ];
 
+$content = [
+    'div' => [
+        'class' => 'title', 
+        'id' => 'site-title',
+        'style' => [
+            'background-color' => 'blue',
+        ]
+    ],
+    'h1' => ['style' => ['text-decoration' => 'underline']]
+];
+
+$button = ['button' => ['type' => 'button', 'class' => 'btn', '@click' => 'greetings']];
+
 $tag->elem($elems)
-    ->setContent('Hello world!', 'p > i')
-    ->setContent('This text written in PHP', 'p > strong')
+    ->content('Hello world!', $content)
+    ->content('Above text written with fully PHP!', 'h2', [
+        'h2' => ['font-style' => 'italic']
+    ])
+    ->content('Click me!', $button)
+    ->content('{{ note }}', 'h3')
     ->render();
 ```
 Above codes will produce:
 ```
-<div class="bold italic">
+<div class="bold italic" id="app">
     <form id="student-form" method="post" action="myweb.com">
-        <p><i>Hello world!</i></p>
-        <p><strong>This text written in PHP</strong></p>
+        <div class="title" id="site-title" style="background-color: blue;">
+            <h1 style="text-decoration: underline;">Hello world!</h1>
+        </div>
+        <h2 style=" font-style: italic;">Above text written with fully PHP!</h2>
+        <button type="button" class="btn" @click="greetings">Click me!</button>
+        <h3>{{ note }}</h3>
     </form>
 </div>
 ```
+
+## Vue.js user? You are in the right place!
+SimpleTag is fully compatible to work with Vue.js as you can see in the above example. Try it from
+`index.php` file!
 
 ## Notes
 This is early version of SimpleTag, it has minimum functionality to create HTML element with PHP,
