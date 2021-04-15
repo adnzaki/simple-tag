@@ -32,7 +32,7 @@
             cursor: pointer;
         }
     </style>
-    <script src="./js/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
     <?php 
