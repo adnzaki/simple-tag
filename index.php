@@ -5,33 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Tag</title>
-    <style>
-        body {
-            font-family: Arial, 'sans-serif';
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .italic {
-            font-style: italic
-        }
-
-        .title {
-            padding: 10px;
-            border-radius: 5px;
-            color: yellow;
-        }
-
-        .btn {
-            padding: 10px;
-            background-color: #94d249;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
