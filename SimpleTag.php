@@ -15,22 +15,22 @@ class SimpleTag
     /**
      * @var string
      */
-    private $rawTag;
+    private $rawTag = '';
 
     /**
      * @var string
      */
-    private $openTag;
+    private $openTag = '';
 
     /**
      * @var string
      */
-    private $closeTag;
+    private $closeTag = '';
 
     /**
      * @var string
      */
-    private $content;
+    private $content = null;
 
     /**
      * The HTML Renderer
@@ -55,6 +55,10 @@ class SimpleTag
      */
     public function elem($tag, array $attributes = [])
     {
+        $this->openTag = '';
+        $this->content = '';
+        $this->closeTag = '';
+        
         $element = $this->createOpenTag($tag, $attributes);
         $this->openTag = $element[0];
         $this->rawTag = $element[1];
