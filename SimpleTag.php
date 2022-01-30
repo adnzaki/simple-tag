@@ -1,13 +1,14 @@
 <?php
 
 /**
- * SimpleTag is a HTML writer for those who really love PHP!
+ * SimpleTag is a HTML generator for those who really love PHP!
  * It can be written with simple and structured API  
  * 
  * @author      Adnan Zaki
  * @package     Library
  * @license     MIT
  * @copyright   Woles DevTeam (c) 2021
+ * @version     0.2.1
  */
 
 class SimpleTag
@@ -75,7 +76,7 @@ class SimpleTag
      * 
      * @return SimpleTag
      */
-    public function content(string $inner, $outer = 'p', array $style = [])
+    public function content(string $inner, $outer = 'div', array $style = [])
     {   
         $result = '';
         if(is_array($outer))
@@ -134,6 +135,10 @@ class SimpleTag
 
         foreach($this->rawTag as $val)
         {
+            $pos = strpos($val, '-');
+            if($pos !== false) {
+                $val = substr($val, 0, $pos);
+            }
             $wrapper[] = "</$val>";
         }
 
@@ -150,6 +155,11 @@ class SimpleTag
             // loop the tags
             foreach($tag as $k => $v) 
             {
+                $pos = strpos($k, '-');
+                if($pos !== false) {
+                    $k = substr($k, 0, $pos);
+                }
+
                 $attr = '';
                 $attr = $this->createAttribute($v);
                 $result .= "<{$k}{$attr}>";
