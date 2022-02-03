@@ -8,7 +8,11 @@
  * @package     Library
  * @license     MIT
  * @copyright   Woles DevTeam (c) 2021
+<<<<<<< HEAD
  * @version     0.2.3
+=======
+ * @version     0.2.1
+>>>>>>> 6f7541f5741b536d14247dbab857e6871ce2774a
  */
 
 class SimpleTag
@@ -146,9 +150,13 @@ class SimpleTag
             if($pos !== false) {
                 $val = substr($val, 0, $pos);
             }
+<<<<<<< HEAD
             if($val !== 'input') {
                 $wrapper[] = "</$val>";
             }
+=======
+            $wrapper[] = "</$val>";
+>>>>>>> 6f7541f5741b536d14247dbab857e6871ce2774a
         }
 
         $this->closeTag = implode('', array_reverse($wrapper));
