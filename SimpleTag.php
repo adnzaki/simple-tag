@@ -8,11 +8,7 @@
  * @package     Library
  * @license     MIT
  * @copyright   Woles DevTeam (c) 2021
-<<<<<<< HEAD
- * @version     0.2.3
-=======
- * @version     0.2.1
->>>>>>> 6f7541f5741b536d14247dbab857e6871ce2774a
+ * @version     0.2.4
  */
 
 class SimpleTag
@@ -40,14 +36,20 @@ class SimpleTag
     /**
      * The HTML Renderer
      * 
-     * @return void
+     * @param bool $raw Send function value as output
+     * 
+     * @return mixed
      */
-    public function render()
+    public function render(bool $raw = false)
     {
         $this->close();
         $html = $this->openTag . $this->content . $this->closeTag . "\n";
 
-        echo $html;
+        if($raw) {
+            return $html;
+        } else {
+            echo $html;
+        }
     }
 
     /**
@@ -150,13 +152,9 @@ class SimpleTag
             if($pos !== false) {
                 $val = substr($val, 0, $pos);
             }
-<<<<<<< HEAD
             if($val !== 'input') {
                 $wrapper[] = "</$val>";
             }
-=======
-            $wrapper[] = "</$val>";
->>>>>>> 6f7541f5741b536d14247dbab857e6871ce2774a
         }
 
         $this->closeTag = implode('', array_reverse($wrapper));
