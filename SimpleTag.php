@@ -14,9 +14,9 @@
 class SimpleTag
 {
     /**
-     * @var string
+     * @var array
      */
-    private $rawTag = '';
+    private $rawTag = [];
 
     /**
      * @var string
@@ -42,7 +42,9 @@ class SimpleTag
      */
     public function render(bool $raw = false)
     {
+        // create closing tag
         $this->close();
+        
         $html = $this->openTag . $this->content . $this->closeTag . "\n";
 
         if($raw) {
@@ -51,6 +53,19 @@ class SimpleTag
             echo $html;
         }
     }
+
+    /**
+     * A shortcut to $this->elem() method
+     * 
+     * @param string|array $tag
+     * @param array $attributes
+     * 
+     * @return SimpleTag
+     */
+    public function el($tag, array $attributes = [])
+    {
+        return $this->elem($tag, $attributes);
+    }  
 
     /**
      * HTML Element generator
@@ -62,13 +77,12 @@ class SimpleTag
      */
     public function elem($tag, array $attributes = [])
     {
-        $this->openTag = '';
-        $this->content = '';
-        $this->closeTag = '';
-        
         $element = $this->createOpenTag($tag, $attributes);
-        $this->openTag = $element[0];
-        $this->rawTag = $element[1];
+        $this->openTag .= $element[0];
+
+        foreach($element[1] as $e => $v) {
+            $this->rawTag[] = $v;
+        }
 
         return $this;
     }   
@@ -165,10 +179,6 @@ class SimpleTag
 
         foreach($this->rawTag as $val)
         {
-            $pos = strpos($val, '-');
-            if($pos !== false) {
-                $val = substr($val, 0, $pos);
-            }
             if($val !== 'input') {
                 $wrapper[] = "</$val>\n";
             }
@@ -187,11 +197,6 @@ class SimpleTag
             // loop the tags
             foreach($tag as $k => $v) 
             {
-                $pos = strpos($k, '-');
-                if($pos !== false) {
-                    $k = substr($k, 0, $pos);
-                }
-
                 $attr = '';
                 $attr = $this->createAttribute($v);
                 $result .= "<{$k}{$attr}>";
@@ -205,7 +210,8 @@ class SimpleTag
         }
 
         return [
-            $result, $rawTag
+            $result, // $result is string
+            $rawTag // $rawTag is array
         ];
     }
 

@@ -46,7 +46,7 @@ $content = [
 
 $button = ['button' => ['type' => 'button', 'class' => 'btn', '@click' => 'greetings']];
 
-$tag->elem($elems)
+$tag->el($elems)
     ->in('Hello world!', $content)
     ->in('Above text written with fully PHP!', 'h2', [
         'h2' => ['font-style' => 'italic']
@@ -72,21 +72,8 @@ Above codes will produce:
 `render()` method takes one parameter called `$raw` with boolean type. Set it to true will give return value as a result. Otherwise, using `render()` method with an empty argument will automatically print HTML result to the browser using PHP `echo`. These options will allow users to choose whether they want to directly print the result to the browser or pass the result into variable or another action.
 
 ## Using multiple same elements
-Since SimpleTag uses array to create elements, so we cannot pass the same element tag in `elem()` method, for example: 
-```
-$elems = [
-        'div' => ['class' => 'my-class'],
-        'div' => ['class' => 'other-class'],
-    ]
-```
-Above divs will be rendered as one element, so to resolve this problem, we have to add a "unique ID" on that element. Use code below to make it works:
-```
-$elems = [
-        'div-1' => ['class' => 'my-class'],
-        'div-2' => ['class' => 'other-class'],
-    ]
-```
-In this case, you have to add "-" character before your unique ID. You can add anything after "-" character, but we recommend using incremental numbers to make them easy to read. SimpleTag will automatically render those same elements with the correct element tag.
+Since SimpleTag uses array key to create elements, so we cannot pass the same element tag in `elem()` or `el()` method. 
+In this case, you have to chain `elem()` or `el()` method, so they will create correct nested elements for you. Using suffix like "-" as in older version is currently not supported due to the non-standard HTML rendering. You can see an example how to this in `test.php` file.
 
 ## Text only content
 There will be a case where you only want to put some texts into `in()`. To handle this, you can pass `null` to the second argument of `in()`. By doing this, SimpleTag will not create any HTML element to the inner HTML.
