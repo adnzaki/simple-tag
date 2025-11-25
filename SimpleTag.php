@@ -7,8 +7,8 @@
  * @author      Adnan Zaki
  * @package     Library
  * @license     MIT
- * @copyright   Woles DevTeam (c) 2021
- * @version     0.2.4
+ * @copyright   Woles DevTeam (c) 2025
+ * @version     0.2.5
  */
 
 class SimpleTag
@@ -62,7 +62,7 @@ class SimpleTag
      * 
      * @return SimpleTag
      */
-    public function el($tag, array $attributes = [])
+    public function el(string|array $tag, array $attributes = [])
     {
         return $this->elem($tag, $attributes);
     }  
@@ -75,7 +75,7 @@ class SimpleTag
      * 
      * @return SimpleTag
      */
-    public function elem($tag, array $attributes = [])
+    public function elem(string|array $tag, array $attributes = [])
     {
         $element = $this->createOpenTag($tag, $attributes);
         $this->openTag .= $element[0];
@@ -97,7 +97,7 @@ class SimpleTag
      * 
      * @return SimpleTag
      */
-    public function in(string $inner, $outer = 'div', array $style = [])
+    public function in(string $inner, string|array $outer = 'div', array $style = [])
     {
         return $this->content($inner, $outer, $style);
     }
@@ -111,18 +111,15 @@ class SimpleTag
      * 
      * @return SimpleTag
      */
-    public function content(string $inner, $outer = 'div', array $style = [])
+    public function content(string $inner, string|array $outer = 'div', array $style = [])
     {   
         $result = '';
-        if($outer !== null)
-        {
-            if(is_array($outer))
-            {   
+        if($outer !== null) {
+            if(is_array($outer)) {   
                 $tags = array_keys($outer);
                 $openTag = $this->createOpenTag($outer);
                 $closeTagWrapper = [];
-                foreach($tags as $tag)
-                {
+                foreach($tags as $tag) {
                     if($tag !== 'input') {
                         $closeTagWrapper[] = "</$tag>";
                     }
@@ -130,23 +127,17 @@ class SimpleTag
     
                 $closeTag = implode('', array_reverse($closeTagWrapper));
                 $result = $openTag[0] . $inner . $closeTag;
-            }
-            else
-            {
-                if(strpos($outer, '>') === false)
-                {
+            } else {
+                if(strpos($outer, '>') === false) {
                     $styleStr = $this->createStyle($outer, $style);
                     $result = '<'.$outer. ' ' .$styleStr.'>'. $inner .'</'.$outer.'>';
-                }
-                else
-                {
+                } else {
                     $removeSpace = str_replace(' ', '', $outer);
                     $elems = explode('>', $removeSpace);
                     $outerOpen = '';
                     $outerClose = '';
                     $outerCloseWrapper = [];
-                    foreach($elems as $val)
-                    {
+                    foreach($elems as $val) {
                         $styleStr = $this->createStyle($val, $style);
                         $outerOpen .= '<' . $val . $styleStr . '>';
                         $outerCloseWrapper[] = '</' . $val . '>';
@@ -158,8 +149,7 @@ class SimpleTag
                 }
             }        
         }
-        else
-        {
+        else {
             $result = $inner;
         }
 
@@ -177,8 +167,7 @@ class SimpleTag
     {
         $wrapper = [];
 
-        foreach($this->rawTag as $val)
-        {
+        foreach($this->rawTag as $val) {
             if($val !== 'input') {
                 $wrapper[] = "</$val>\n";
             }
@@ -187,23 +176,30 @@ class SimpleTag
         $this->closeTag = implode('', array_reverse($wrapper));
     }    
 
-    private function createOpenTag($tag, array $attributes = [])
+    /**
+     * Create opening tag of element
+     * This method will return an array. The first element is the opening tag string.
+     * The second element is an array of raw HTML tag names.
+     * 
+     * @param string|array $tag The tag name or an array of tag names
+     * @param array $attributes An array of attributes for the tag
+     * 
+     * @return array
+     */
+    private function createOpenTag(string|array $tag, array $attributes = [])
     {
         $result = '';
-        if(is_array($tag))
-        {
+        if(is_array($tag)) {
             $rawTag = array_keys($tag);
 
             // loop the tags
-            foreach($tag as $k => $v) 
-            {
+            foreach($tag as $k => $v) {
                 $attr = '';
                 $attr = $this->createAttribute($v);
                 $result .= "<{$k}{$attr}>";
             }
         }
-        else
-        {
+        else {
             $attr = $this->createAttribute($attributes);      
             $result = "<{$tag}{$attr}>";
             $rawTag = [$tag];
@@ -222,7 +218,7 @@ class SimpleTag
      * 
      * @return string
      */
-    private function createAttribute($attributes)
+    private function createAttribute(array $attributes)
     {
         $attr = '';
         if(count($attributes) > 0)
@@ -271,7 +267,7 @@ class SimpleTag
      * 
      * @return string
      */
-    private function createStyle($outer, $style)    
+    private function createStyle(string $outer, array $style)    
     {
         $styleStr = '';
         if(isset($style[$outer]))
